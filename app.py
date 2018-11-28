@@ -1,5 +1,6 @@
 from splinter.browser import Browser
 from bs4 import BeautifulSoup
+import wget
 from time import sleep
 
 class CensusExport(object):
@@ -78,7 +79,8 @@ class CensusExport(object):
         continue_button.click()
         self.wait_until_finish(browser)
         link = browser.evaluate_script("document.querySelector('#current_result .DownloadCSV').href")
-        print(link)
+        file = wget.download(link)
+        print("""File %s downloaded""" % file)
 
     def wait_until_finish(self, browser):
         while 1:
