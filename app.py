@@ -79,7 +79,6 @@ class CensusExport(object):
         continue_button.click()
         self.wait_until_finish(browser)
         link = browser.evaluate_script("document.querySelector('#current_result .DownloadCSV').href")
-        import ipdb; ipdb.set_trace()  # breakpoint fbd9ca1c //
 
         file = wget.download(link, out=state_name+'.csv')
         print("""File %s downloaded""" % file)
