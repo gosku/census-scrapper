@@ -19,13 +19,13 @@ class CensusExport(object):
             name = state.find_by_tag('span')[1].text
             if name == 'United States':
                 continue
-            self.export_state(browser, state)
+            self.export_state(browser, state, name)
 
 
-    def export_state(self, browser, state):
-        self.run_geography_tab(browser, state)
+    def export_state(self, browser, state, state_name):
+        self.run_geography_tab(browser, state, state_name)
 
-    def run_geography_tab(self, browser, state):
+    def run_geography_tab(self, browser, state, state_name):
         browser.find_by_id('tabs_tablist_area_tab').first.click()
         state.click()
         print('waiting')
@@ -39,9 +39,9 @@ class CensusExport(object):
         )
         continue_button = browser.find_by_id('continue_with_selection_label').first
         continue_button.click()
-        self.run_firm_tab(browser)
+        self.run_firm_tab(browser, state_name)
 
-    def run_firm_tab(self, browser):
+    def run_firm_tab(self, browser, state_name):
         # Click Select All
         browser.execute_script(
             '''
@@ -50,19 +50,19 @@ class CensusExport(object):
         )
         continue_button = browser.find_by_id('continue_to_worker_char_label').first
         continue_button.click()
-        self.run_worker_tab(browser)
+        self.run_worker_tab(browser, state_name)
 
-    def run_worker_tab(self, browser):
+    def run_worker_tab(self, browser, state_name):
         continue_button = browser.find_by_id('continue_to_indicators_label').first
         continue_button.click()
-        self.run_indicators_tab(browser)
+        self.run_indicators_tab(browser, state_name)
 
-    def run_indicators_tab(self, browser):
+    def run_indicators_tab(self, browser, state_name):
         continue_button = browser.find_by_id('continue_to_quarters_label').first
         continue_button.click()
-        self.run_quarters_tab(browser)
+        self.run_quarters_tab(browser, state_name)
 
-    def run_quarters_tab(self, browser):
+    def run_quarters_tab(self, browser, state_name):
         #Click on quarter columns
         browser.execute_script("document.querySelectorAll('table thead span')[0].click()")
         browser.execute_script("document.querySelectorAll('table thead span')[1].click()")
@@ -71,15 +71,17 @@ class CensusExport(object):
 
         continue_button = browser.find_by_id('continue_to_export_label').first
         continue_button.click()
-        self.run_summary_tab(browser)
+        self.run_summary_tab(browser, state_name)
 
-    def run_summary_tab(self, browser):
+    def run_summary_tab(self, browser, state_name):
         sleep(5)
         continue_button = browser.find_by_id('submit_request_label').first
         continue_button.click()
         self.wait_until_finish(browser)
         link = browser.evaluate_script("document.querySelector('#current_result .DownloadCSV').href")
-        file = wget.download(link)
+        import ipdb; ipdb.set_trace()  # breakpoint fbd9ca1c //
+
+        file = wget.download(link, out=state_name+'.csv')
         print("""File %s downloaded""" % file)
 
     def wait_until_finish(self, browser):
