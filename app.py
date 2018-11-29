@@ -11,14 +11,15 @@ class CensusExport(object):
         browser.visit(url)
 
 
-        # sidebar = browser.find_by_id("states_list")
+        sidebar = browser.find_by_id("states_list")
 
-        states = browser.find_by_css("a.QwiFilteringListItem")
+        states = sidebar.find_by_css("a.QwiFilteringListItem")
 
         for state in states:
-            name = state.find_by_tag('span')[1].text
+            name = state.find_by_tag('span')[1].html
             if name == 'United States':
                 continue
+            print('''Downloading cvs for %s''' % name )
             self.export_state(browser, state, name)
 
 
@@ -28,7 +29,6 @@ class CensusExport(object):
     def run_geography_tab(self, browser, state, state_name):
         browser.find_by_id('tabs_tablist_area_tab').first.click()
         state.click()
-        print('waiting')
         sleep(5)
 
         # Click Select All
